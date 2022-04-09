@@ -24,11 +24,12 @@ namespace Doors
             _timer = Task.Run(() =>
             {
                 var cancellationToken = _cancellationTokenSource.Token;
+
                 Task.Delay(_delay, cancellationToken).Wait(cancellationToken);
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    _isAlarming = true;
-                }
+                if (cancellationToken.IsCancellationRequested) { return; }
+
+                _isAlarming = true;
+                Console.WriteLine("Wee woo! Wee woo! Wee woo!");
             });
         }
 
