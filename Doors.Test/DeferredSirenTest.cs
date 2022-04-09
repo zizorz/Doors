@@ -6,6 +6,8 @@ namespace Doors.Test
 {
     public class DeferredSirenTest
     {
+        private readonly TimeSpan _margin = TimeSpan.FromMilliseconds(30);
+
         [Fact(DisplayName = "A DeferredSiren should not be alarming when created")]
         public void DeferredSiren_Should_NotBeInAlarm_When_Created()
         {
@@ -25,7 +27,7 @@ namespace Doors.Test
             var siren = new DeferredSiren(delay);
 
             siren.TurnOn();
-            Task.Delay(delay + TimeSpan.FromMilliseconds(30)).Wait();
+            Task.Delay(delay + _margin).Wait();
 
             Assert.True(siren.IsAlarming());
         }
@@ -43,9 +45,24 @@ namespace Doors.Test
             siren.TurnOn();
             Task.Delay(delay / 2).Wait();
             siren.TurnOff();
-            Task.Delay(delay / 2 + TimeSpan.FromMilliseconds(30)).Wait();
+            Task.Delay(delay / 2 + _margin).Wait();
 
             Assert.False(siren.IsAlarming());
+        }
+
+        [Fact(DisplayName = "A DeferredSiren should be able to alarm multiple times")]
+        public void TurnOn_Should_MakeTheSirenAlarm_When_ItHasAlarmedBeforeAndThenTurnedOff()
+        {
+            var delay = TimeSpan.FromMilliseconds(10);
+            var siren = new DeferredSiren(delay);
+
+            siren.TurnOn();
+            Task.Delay(delay + _margin).Wait();
+            siren.TurnOff();
+
+            siren.TurnOn();
+            Task.Delay(delay + _margin).Wait();
+            Assert.True(siren.IsAlarming());
         }
     }
 }
