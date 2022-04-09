@@ -61,11 +61,10 @@ namespace Doors
                 return this;
             }
 
-            public Door Build()
+            public IDoor Build()
             {
                 return _door;
             }
-
         }
     }
 }
