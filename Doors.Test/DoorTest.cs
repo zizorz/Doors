@@ -7,14 +7,14 @@ namespace Doors.Test
         [Fact(DisplayName = "A Door should be closed when created")]
         public void Door_Should_BeClosed_When_Created()
         {
-            var door = new Door.DoorBuilder().Build();
+            var door = new Door.DoorBuilder(Category.None).Build();
             Assert.False(door.IsOpen());
         }
 
         [Fact(DisplayName = "A Door should be open after opening it")]
         public void Open_Should_OpenDoor_When_DoorIsClosed()
         {
-            var door = new Door.DoorBuilder().Build();
+            var door = new Door.DoorBuilder(Category.None).Build();
             door.Open();
             Assert.True(door.IsOpen());
         }
@@ -22,7 +22,7 @@ namespace Doors.Test
         [Fact(DisplayName = "A Door should be closed after closing it")]
         public void Close_Should_CloseDoor_When_DoorIsOpen()
         {
-            var door = new Door.DoorBuilder().Build();
+            var door = new Door.DoorBuilder(Category.None).Build();
             door.Open();
 
             door.Close();

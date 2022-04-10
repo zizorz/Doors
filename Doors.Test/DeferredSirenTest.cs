@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Doors.Components.Sirens;
 using Xunit;
 
 namespace Doors.Test

@@ -1,39 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Text;
+using Doors.Components.Buzzers;
+using Doors.Components.Keypads;
+using Doors.Components.Locks;
+using Doors.Components.Sirens;
 
 namespace Doors
 {
-    public class Door : IDoor
+    public sealed class Door : IDoor
     {
         private bool _isOpen;
 
-        public IList<Action> OnOpenActions { get; }
-        public IList<Action> OnCloseActions { get; }
+        public Category Category { get; }
 
-        private Door()
+        private Door(Category category)
         {
-            OnOpenActions = new List<Action>();
-            OnCloseActions = new List<Action>();
+            Category = category;
         }
 
         public void Open()
         {
-            if (_isOpen) { return; }
             _isOpen = true;
-            foreach (var action in OnOpenActions)
-            {
-                action();
-            }
         }
 
         public void Close()
         {
-            if (!_isOpen) { return; }
             _isOpen = false;
-            foreach (var action in OnCloseActions)
-            {
-                action();
-            }
         }
 
         public bool IsOpen()
@@ -41,23 +33,51 @@ namespace Doors
             return _isOpen;
         }
 
+        public override string ToString()
+        {
+            var category = Category == Category.None ? "Door" : $"{Category} Door";
+            return new StringBuilder()
+                .AppendLine(category)
+                .ToString();
+        }
+
         public class DoorBuilder
         {
-            private readonly Door _door;
-            public DoorBuilder()
+            protected IDoor _door;
+            protected bool _canAddLock = true;
+
+            public DoorBuilder(Category category)
             {
-                _door = new Door();
+                _door = new Door(category);
             }
 
-            public DoorBuilder WithOpenAction(Action openAction)
+            public DoorBuilder WithLock(ILock doorLock)
             {
-                _door.OnOpenActions.Add(openAction);
+                if (!_canAddLock)
+                {
+                    throw new ArgumentException("Locks must be added first.");
+                }
+                _door = new DoorWithLock(_door, doorLock);
                 return this;
             }
 
-            public DoorBuilder WithCloseAction(Action closeAction)
+            public DoorBuilder WithSiren(ISiren siren)
             {
-                _door.OnCloseActions.Add(closeAction);
+                _door = new DoorWithSiren(_door, siren);
+                _canAddLock = false;
+                return this;
+            }
+
+            public DoorBuilder WithBuzzer(IBuzzer buzzer)
+            {
+                _door = new DoorWithBuzzer(_door, buzzer);
+                _canAddLock = false;
+                return this;
+            }
+
+            public DoorBuilder WithKeyPad(IKeypad keypad)
+            {
+                _door = new DoorWithKeyPad(_door, keypad);
                 return this;
             }
 

@@ -1,6 +1,6 @@
-﻿namespace Doors
+﻿namespace Doors.Components.Sirens
 {
-    public interface ISiren
+    public interface ISiren : IDoorComponent
     {
         public void TurnOn();
 

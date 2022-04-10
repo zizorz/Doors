@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Doors
+namespace Doors.Components.Sirens
 {
     public class DeferredSiren : ISiren
     {
@@ -43,6 +43,12 @@ namespace Doors
         public bool IsAlarming()
         {
             return _isAlarming;
+        }
+
+
+        public string GetName()
+        {
+            return $"{nameof(DeferredSiren)} with {_delay} delay";
         }
     }
 }
