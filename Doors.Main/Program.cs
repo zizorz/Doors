@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Doors.Components.Buzzers;
@@ -19,9 +21,10 @@ namespace Doors.Main
 
         private static void BuzzingDoor()
         {
-            Console.WriteLine("Creating a Door with a Buzzer");
+            Console.WriteLine("Creating a Front Door with a Buzzer");
             var buzzer = new StandardBuzzer();
-            var door = new Door.DoorBuilder(Category.Front)
+            var door = new DoorBuilder()
+                .WithCategory(Category.Front)
                 .WithBuzzer(buzzer)
                 .Build();
 
@@ -30,18 +33,19 @@ namespace Doors.Main
             Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             Console.WriteLine("Opening door...");
             door.Open();
-            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("--------------------------------------------------------------------------------\n");
         }
 
         private static void KeyPadDoor()
         {
-            Console.WriteLine("Creating a Door with a Keypad that automatically locks when closed");
+            Console.WriteLine("Creating a Security Door with a Keypad that automatically locks when closed");
             var lockingMechanism = new DeadBoltLockingMechanism();
             var lockHouse = new AssaLockHouse();
             var doorLock = new StandardLock(lockingMechanism, lockHouse);
             var keypad = new TouchScreenKeyPad(doorLock, 9);
-            var door = new ExtendedDoorBuilder(Category.Security)
+            var door = new ExtendedDoorBuilder()
                 .WithAutoLock(doorLock)
+                .WithCategory(Category.Security)
                 .WithLock(doorLock)
                 .WithKeyPad(keypad)
                 .Build();
@@ -80,14 +84,15 @@ namespace Doors.Main
                 Console.WriteLine("The Door is now locked.");
             }
 
-            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("--------------------------------------------------------------------------------\n");
         }
 
         private static void SirenDoor()
         {
-            Console.WriteLine("Creating a Door with 30 second deferred siren");
+            Console.WriteLine("Creating a Security Door with a 30 second deferred siren");
             var siren = new DeferredSiren(TimeSpan.FromSeconds(30));
-            var door = new Door.DoorBuilder(Category.Security)
+            var door = new DoorBuilder()
+                .WithCategory(Category.Security)
                 .WithSiren(siren)
                 .Build();
 
@@ -115,20 +120,25 @@ namespace Doors.Main
             {
                 Console.WriteLine("Siren is no longer alarming");
             }
-            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("--------------------------------------------------------------------------------\n");
         }
     }
 
-    internal class ExtendedDoorBuilder : Door.DoorBuilder
+    internal class ExtendedDoorBuilder : DoorBuilder
     {
-        public ExtendedDoorBuilder(Category category) : base(category)
-        {
-        }
+        private readonly IList<ILock> _autoLocks = new List<ILock>();
 
         public ExtendedDoorBuilder WithAutoLock(ILock @lock)
         {
-            _door = new DoorWithAutoLock(_door, @lock);
+            _autoLocks.Add(@lock);
             return this;
+        }
+
+        public override IDoor Build()
+        {
+            var door = base.Build();
+            door = _autoLocks.Aggregate(door, (current, @lock) => new DoorWithAutoLock(current, @lock));
+            return door;
         }
     }
 
