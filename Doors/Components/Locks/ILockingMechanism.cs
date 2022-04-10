@@ -1,4 +1,4 @@
-﻿namespace Doors.Components.LockingMechanisms
+﻿namespace Doors.Components.Locks
 {
     public interface ILockingMechanism : IDoorComponent
     {

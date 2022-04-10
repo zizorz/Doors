@@ -1,5 +1,4 @@
 ﻿using System;
-using Doors.Components.LockingMechanisms;
 
 namespace Doors.Components.Locks
 {

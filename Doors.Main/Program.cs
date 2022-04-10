@@ -63,7 +63,7 @@ namespace Doors.Main
             Console.WriteLine("Entering the correct pin on the keypad");
             keypad.EnterCode(9);
 
-            if (!lockingMechanism.IsLocked())
+            if (!doorLock.IsLocked())
             {
                 Console.WriteLine("The Door is now unlocked.");
             }
@@ -79,7 +79,7 @@ namespace Doors.Main
             Console.WriteLine("Closing the Door...");
             door.Close();
 
-            if (lockingMechanism.IsLocked())
+            if (doorLock.IsLocked())
             {
                 Console.WriteLine("The Door is now locked.");
             }

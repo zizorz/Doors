@@ -2,7 +2,7 @@
 
 namespace Doors
 {
-    public sealed partial class Door : IDoor
+    public sealed class Door : IDoor
     {
         private bool _isOpen;
 
